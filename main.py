@@ -4,6 +4,12 @@ from pprint import pprint
 from uuid import uuid1
 import datetime
 
+
+variants = list(range(100, 555))
+shuffle(variants)
+var = 0
+
+
 def convert_base(num, to_base=10, from_base=10):
     # first convert to decimal number
     if isinstance(num, str):
@@ -44,15 +50,27 @@ for e in generate_variant(5):
     print(to_text(e))
 
 def generate_variant_files(quantity=16):
-    var_id = f"{datetime.date.today()}-{'-'.join(str(uuid1()).split('-')[1:3])}"
+    var_id = f"{datetime.date.today()}-{datetime.datetime.now().hour}h-{datetime.datetime.now().minute}m-{randint(1, 4000)}"
+    global var, variants
+    var_id = variants[var]
+    var += 1
     tasks = [to_text(i) for i in generate_variant(quantity)]
-    f_q = open(f'{var_id}_q.txt', 'w')
-    f_a = open(f'{var_id}_a.txt', 'w')
+    f_q = open(f'q/{var_id}_q.txt', 'w', encoding='utf-8')
+    f_q_csv = open(f'q/{var_id}_q.csv', 'w', encoding='utf-8')
+    f_a = open(f'a/{var_id}_a.txt', 'w', encoding='utf-8')
+
+    f_q.write(f'variant: {var_id}\n')
+    f_q_csv.write(f'variant: {var_id};;\n')
+    f_a.write(str(f'variant: {var_id}\n'))
+
     for tsk in tasks:
-        f_q.write(tsk[0]+'\n')
-        f_a.write(str(tsk[1])+'\n')
+        f_q.write(tsk[0]+'\n\n\n')
+        f_q_csv.write(tsk[0] +';;\n\n\n')
+        f_a.write(str(tsk[1])+'\n\n\n')
     f_a.close()
     f_q.close()
+    f_q_csv.close()
 
-generate_variant_files()
+for _ in range(20):
+    generate_variant_files()
 
